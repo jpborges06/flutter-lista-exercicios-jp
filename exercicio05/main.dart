@@ -11,48 +11,65 @@ class MeuApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: const ConversorTemperatura(),
+      home: const CalculadoraMedia(),
     );
   }
 }
 
-class ConversorTemperatura extends StatefulWidget {
-  const ConversorTemperatura({super.key});
+class CalculadoraMedia extends StatefulWidget {
+  const CalculadoraMedia({super.key});
 
   @override
-  State<ConversorTemperatura> createState() => _ConversorTemperaturaState();
+  State<CalculadoraMedia> createState() => _CalculadoraMediaState();
 }
 
-class _ConversorTemperaturaState extends State<ConversorTemperatura> {
-  final TextEditingController temperaturaController =
-      TextEditingController();
+class _CalculadoraMediaState extends State<CalculadoraMedia> {
+  final TextEditingController nota1Controller = TextEditingController();
+  final TextEditingController nota2Controller = TextEditingController();
+  final TextEditingController nota3Controller = TextEditingController();
 
   String mensagem = '';
 
-  void converter() {
-    double? celsius = double.tryParse(temperaturaController.text);
+  void calcular() {
+    double? nota1 = double.tryParse(nota1Controller.text);
+    double? nota2 = double.tryParse(nota2Controller.text);
+    double? nota3 = double.tryParse(nota3Controller.text);
 
     setState(() {
-      if (celsius != null) {
-        double fahrenheit = (celsius * 9 / 5) + 32;
+      if (nota1 != null && nota2 != null && nota3 != null) {
+        double media = (nota1 + nota2 + nota3) / 3;
+
+        String situacao;
+
+        if (media >= 6) {
+          situacao = 'Aprovado';
+        } else {
+          situacao = 'Reprovado';
+        }
+
         mensagem =
-            'Temperatura em Fahrenheit: ${fahrenheit.toStringAsFixed(1)} °F';
+            'Média: ${media.toStringAsFixed(1)}\n'
+            'Situação: $situacao';
       } else {
-        mensagem = 'Digite uma temperatura válida.';
+        mensagem = 'Digite todas as notas corretamente.';
       }
     });
   }
 
   void limpar() {
     setState(() {
-      temperaturaController.clear();
+      nota1Controller.clear();
+      nota2Controller.clear();
+      nota3Controller.clear();
       mensagem = '';
     });
   }
 
   @override
   void dispose() {
-    temperaturaController.dispose();
+    nota1Controller.dispose();
+    nota2Controller.dispose();
+    nota3Controller.dispose();
     super.dispose();
   }
 
@@ -60,19 +77,39 @@ class _ConversorTemperaturaState extends State<ConversorTemperatura> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Conversor de Temperatura'),
+        title: const Text('Calculadora de Média'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
             TextField(
-              controller: temperaturaController,
+              controller: nota1Controller,
               keyboardType: const TextInputType.numberWithOptions(
                 decimal: true,
               ),
               decoration: const InputDecoration(
-                labelText: 'Temperatura em Celsius',
+                labelText: 'Nota 1',
+              ),
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: nota2Controller,
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
+              decoration: const InputDecoration(
+                labelText: 'Nota 2',
+              ),
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: nota3Controller,
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
+              decoration: const InputDecoration(
+                labelText: 'Nota 3',
               ),
             ),
             const SizedBox(height: 16),
@@ -80,8 +117,8 @@ class _ConversorTemperaturaState extends State<ConversorTemperatura> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ElevatedButton(
-                  onPressed: converter,
-                  child: const Text('Converter'),
+                  onPressed: calcular,
+                  child: const Text('Calcular'),
                 ),
                 const SizedBox(width: 10),
                 ElevatedButton(
